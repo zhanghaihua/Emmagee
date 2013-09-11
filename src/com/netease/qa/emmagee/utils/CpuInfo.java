@@ -24,11 +24,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import com.netease.qa.emmagee.service.EmmageeService;
-
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
+
+import com.netease.qa.emmagee.service.EmmageeService;
 
 /**
  * operate CPU information
@@ -60,6 +60,10 @@ public class CpuInfo {
 	private String totalCpuRatio = "";
 	private int pid;
 
+	public CpuInfo() {
+		
+	}
+	
 	public CpuInfo(Context context, int pid, String uid) {
 		this.pid = pid;
 		this.context = context;
@@ -115,6 +119,52 @@ public class CpuInfo {
 		}
 	}
 
+	/**
+	 * read the status of CPU. 0:processCpu 1:idleCpu 2:totalCpu
+	 * 
+	 * @throws FileNotFoundException
+	 */
+	public long[] readCpuStat(int pid) {
+		String processPid = Integer.toString(pid);
+		String cpuStatPath = "/proc/" + processPid + "/stat";
+		try {
+			// monitor cpu stat of certain process
+			RandomAccessFile processCpuInfo = new RandomAccessFile(cpuStatPath,
+					"r");
+			String line = "";
+			StringBuffer stringBuffer = new StringBuffer();
+			stringBuffer.setLength(0);
+			while ((line = processCpuInfo.readLine()) != null) {
+				stringBuffer.append(line + "\n");
+			}
+			String[] tok = stringBuffer.toString().split(" ");
+			processCpu = Long.parseLong(tok[13]) + Long.parseLong(tok[14]);
+			processCpuInfo.close();
+		} catch (FileNotFoundException e) {
+			Log.e(LOG_TAG, "FileNotFoundException: " + e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			// monitor total and idle cpu stat of certain process
+			RandomAccessFile cpuInfo = new RandomAccessFile("/proc/stat", "r");
+			String[] toks = cpuInfo.readLine().split("\\s+");
+			idleCpu = Long.parseLong(toks[4]);
+			totalCpu = Long.parseLong(toks[1]) + Long.parseLong(toks[2])
+					+ Long.parseLong(toks[3]) + Long.parseLong(toks[4])
+					+ Long.parseLong(toks[6]) + Long.parseLong(toks[5])
+					+ Long.parseLong(toks[7]);
+			cpuInfo.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return new long[] { processCpu, idleCpu, totalCpu };
+	}
+	
 	/**
 	 * get CPU name.
 	 * 
