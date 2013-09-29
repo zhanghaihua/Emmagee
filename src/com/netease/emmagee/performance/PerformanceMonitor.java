@@ -143,8 +143,9 @@ public class PerformanceMonitor {
 			dir = context.getFilesDir().getPath() + File.separator + toolName;
 		}
 //		resultFilePath = dir + File.separator + toolName + "-" + mDateTime + ".csv";
-		resultFilePath = dir + File.separator + toolName + "-" + Build.VERSION.SDK_INT + "-"
-				+ Build.MODEL.replace(" ", "-") + "-PerformanceMonitor" + ".csv";
+//		resultFilePath = dir + File.separator + toolName + "-" + Build.VERSION.SDK_INT + "-"
+//				+ Build.MODEL.replace(" ", "-") + "-PerformanceMonitor" + ".csv";
+		resultFilePath = dir + File.separator + "PerformanceMonitor.csv"; // 这边的性能文件命名改简单一点
 		try {
 			// 创建目录
 			File fileDir = new File(dir);
