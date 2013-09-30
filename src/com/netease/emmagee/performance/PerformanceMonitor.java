@@ -38,12 +38,12 @@ import android.util.Log;
 
 /**
  * Service running in background
+ * 
  * @author hz_liuxiao
  */
 public class PerformanceMonitor {
 
-	private final static String LOG_TAG = "Emmagee-"
-			+ PerformanceMonitor.class.getSimpleName();
+	private final static String LOG_TAG = "Emmagee-" + PerformanceMonitor.class.getSimpleName();
 
 	private int delaytime = 1000;
 	private Handler handler = new Handler();
@@ -60,8 +60,7 @@ public class PerformanceMonitor {
 	private SimpleDateFormat formatterTime;
 	private DecimalFormat fomart;
 	private boolean isInitialStatic = true;
-	private long processCpu1, processCpu2, totalCpu1, totalCpu2, idleCpu1,
-			idleCpu2;
+	private long processCpu1, processCpu2, totalCpu1, totalCpu2, idleCpu1, idleCpu2;
 	private long startTraff, endTraff, intervalTraff;
 	private String currentBatt, temperature, voltage;
 	private boolean isRunnableStop = false;
@@ -69,10 +68,10 @@ public class PerformanceMonitor {
 	private Context context;
 
 	private String toolName;
+
 	// private OrangeSolo orange;
 
-	public PerformanceMonitor(Context context, String packageName, String toolName,
-			String mDateTime) {
+	public PerformanceMonitor(Context context, String packageName, String toolName, String mDateTime) {
 		this.context = context;
 
 		fomart = new DecimalFormat();
@@ -89,8 +88,8 @@ public class PerformanceMonitor {
 		// orange = serializable.getOrange();
 		getAppInfo(packageName);
 		// 不在初始化的时候创建报告，而是在真正做记录的时候创建
-//		creatReport(toolName, mDateTime);
-		this.toolName = toolName;  
+		// creatReport(toolName, mDateTime);
+		this.toolName = toolName;
 		cpuInfo = new CpuInfo();
 		memoryInfo = new MemoryInfo();
 		networkInfo = new TrafficInfo();
@@ -102,8 +101,7 @@ public class PerformanceMonitor {
 	 * @param packageName
 	 */
 	private void getAppInfo(String packageName) {
-		ActivityManager am = (ActivityManager) context
-				.getSystemService(Context.ACTIVITY_SERVICE);
+		ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 		List<RunningAppProcessInfo> run = am.getRunningAppProcesses();
 		// PackageManager pm = context.getPackageManager();
 		for (RunningAppProcessInfo runningProcess : run) {
@@ -122,29 +120,28 @@ public class PerformanceMonitor {
 	 */
 	private void creatReport(String toolName, String dateTime) {
 		Log.d(LOG_TAG, "start write report");
-//		Calendar cal = Calendar.getInstance();
-//		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-//		String mDateTime;
-//		if ((Build.MODEL.equals("sdk")) || (Build.MODEL.equals("google_sdk")))
-//			mDateTime = formatter.format(cal.getTime().getTime() + 8 * 60 * 60
-//					* 1000);
-//		else
-//			mDateTime = formatter.format(cal.getTime().getTime());
+		// Calendar cal = Calendar.getInstance();
+		// SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+		// String mDateTime;
+		// if ((Build.MODEL.equals("sdk")) ||
+		// (Build.MODEL.equals("google_sdk")))
+		// mDateTime = formatter.format(cal.getTime().getTime() + 8 * 60 * 60
+		// * 1000);
+		// else
+		// mDateTime = formatter.format(cal.getTime().getTime());
 
 		String dir = "";
-		if (android.os.Environment.getExternalStorageState().equals(
-				android.os.Environment.MEDIA_MOUNTED)) {
-			dir = android.os.Environment
-					.getExternalStorageDirectory()
-					+ File.separator
-					+ toolName;
-			
+		if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
+			dir = android.os.Environment.getExternalStorageDirectory() + File.separator + toolName;
+
 		} else {
 			dir = context.getFilesDir().getPath() + File.separator + toolName;
 		}
-//		resultFilePath = dir + File.separator + toolName + "-" + mDateTime + ".csv";
-//		resultFilePath = dir + File.separator + toolName + "-" + Build.VERSION.SDK_INT + "-"
-//				+ Build.MODEL.replace(" ", "-") + "-PerformanceMonitor" + ".csv";
+		// resultFilePath = dir + File.separator + toolName + "-" + mDateTime +
+		// ".csv";
+		// resultFilePath = dir + File.separator + toolName + "-" +
+		// Build.VERSION.SDK_INT + "-"
+		// + Build.MODEL.replace(" ", "-") + "-PerformanceMonitor" + ".csv";
 		resultFilePath = dir + File.separator + "PerformanceMonitor.csv"; // 这边的性能文件命名改简单一点
 		try {
 			// 创建目录
@@ -161,10 +158,8 @@ public class PerformanceMonitor {
 				osw = new OutputStreamWriter(out, "GBK");
 				bw = new BufferedWriter(osw);
 				// 生成头文件
-				bw.write("测试用例信息" + "," + "时间" + "," + "应用占用内存PSS(MB)" + "," + "应用占用内存比(%)" + ","
-						+ " 机器剩余内存(MB)" + "," + "应用占用CPU率(%)" + "," + "CPU总使用率(%)"
-						+ "," + "流量(KB)" + "," + "当前电量" + "," + "电池温度(C)" + ","
-						+ "电压(V)" + "\r\n");
+				bw.write("测试用例信息" + "," + "时间" + "," + "应用占用内存PSS(MB)" + "," + "应用占用内存比(%)" + "," + " 机器剩余内存(MB)" + "," + "应用占用CPU率(%)" + ","
+						+ "CPU总使用率(%)" + "," + "流量(KB)" + "," + "当前电量" + "," + "电池温度(C)" + "," + "电压(V)" + "\r\n");
 				bw.flush();
 			} else {
 				out = new FileOutputStream(resultFile, true); // 在文件内容后继续加内容
@@ -188,22 +183,20 @@ public class PerformanceMonitor {
 			startTraff = networkInfo.getTrafficInfo(uid);
 			isInitialStatic = false;
 		}
-		
+
 		// Network
 		endTraff = networkInfo.getTrafficInfo(uid);
 		if (startTraff == -1)
 			intervalTraff = -1;
 		else
 			intervalTraff = (endTraff - startTraff + 1023) / 1024;
-		
+
 		// CPU
 		processCpu1 = cpuInfo.readCpuStat(pid)[0];
 		idleCpu1 = cpuInfo.readCpuStat(pid)[1];
 		totalCpu1 = cpuInfo.readCpuStat(pid)[2];
-		String processCpuRatio = fomart
-				.format(100 * ((double) (processCpu1 - processCpu2) / ((double) (totalCpu1 - totalCpu2))));
-		String totalCpuRatio = fomart
-				.format(100 * ((double) ((totalCpu1 - idleCpu1) - (totalCpu2 - idleCpu2)) / (double) (totalCpu1 - totalCpu2)));
+		String processCpuRatio = fomart.format(100 * ((double) (processCpu1 - processCpu2) / ((double) (totalCpu1 - totalCpu2))));
+		String totalCpuRatio = fomart.format(100 * ((double) ((totalCpu1 - idleCpu1) - (totalCpu2 - idleCpu2)) / (double) (totalCpu1 - totalCpu2)));
 
 		// Memory
 		long pidMemory = memoryInfo.getPidMemorySize(pid, context);
@@ -213,22 +206,17 @@ public class PerformanceMonitor {
 		long totalMemorySize = memoryInfo.getTotalMemory();
 		String percent = "统计出错";
 		if (totalMemorySize != 0) {
-			percent = fomart
-					.format(((double) pidMemory / (double) totalMemorySize) * 100);
+			percent = fomart.format(((double) pidMemory / (double) totalMemorySize) * 100);
 		}
-		
+
 		try {
 			if (intervalTraff == -1) {
-				bw.write(this.getTestCaseInfo() + "-" + this.getActionInfo() + "," + mDateTime + "," + pss + "," + percent + ","
-						+ freeMem + "," + processCpuRatio + ","
-						+ totalCpuRatio + "," + "本程序或本设备不支持流量统计" + ","
-						+ currentBatt + "," + temperature + "," + voltage
+				bw.write(this.getTestCaseInfo() + "-" + this.getActionInfo() + "," + mDateTime + "," + pss + "," + percent + "," + freeMem + ","
+						+ processCpuRatio + "," + totalCpuRatio + "," + "本程序或本设备不支持流量统计" + "," + currentBatt + "," + temperature + "," + voltage
 						+ "\r\n");
 			} else {
-				bw.write(this.getTestCaseInfo() + "-" + this.getActionInfo()  + "," + mDateTime + "," + pss + "," + percent + ","
-						+ freeMem + "," + processCpuRatio + ","
-						+ totalCpuRatio + "," + intervalTraff + ","
-						+ currentBatt + "," + temperature + "," + voltage
+				bw.write(this.getTestCaseInfo() + "-" + this.getActionInfo() + "," + mDateTime + "," + pss + "," + percent + "," + freeMem + ","
+						+ processCpuRatio + "," + totalCpuRatio + "," + intervalTraff + "," + currentBatt + "," + temperature + "," + voltage
 						+ "\r\n");
 			}
 			bw.flush();
@@ -236,7 +224,7 @@ public class PerformanceMonitor {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		processCpu2 = processCpu1;
 		idleCpu2 = idleCpu1;
 		totalCpu2 = totalCpu1;
@@ -254,8 +242,9 @@ public class PerformanceMonitor {
 
 	/**
 	 * 电量广播类
+	 * 
 	 * @author hz_liuxiao@corp.netease.com
-	 *
+	 * 
 	 */
 	public class BatteryInfoBroadcastReceiver extends BroadcastReceiver {
 
@@ -268,14 +257,11 @@ public class PerformanceMonitor {
 				int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 				currentBatt = String.valueOf(level * 100 / scale) + "%";
 
-				voltage = String.valueOf(intent.getIntExtra(
-						BatteryManager.EXTRA_VOLTAGE, -1) * 1.0 / 1000);
+				voltage = String.valueOf(intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1) * 1.0 / 1000);
 
-				temperature = String.valueOf(intent.getIntExtra(
-						BatteryManager.EXTRA_TEMPERATURE, -1) * 1.0 / 10);
+				temperature = String.valueOf(intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1) * 1.0 / 10);
 
-				int status = intent
-						.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+				int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
 			}
 
 		}
@@ -303,7 +289,7 @@ public class PerformanceMonitor {
 		isRunnableStop = true;
 		closeOpenedStream();
 	}
-	
+
 	/**
 	 * 从栈中获取类名和测试方法名
 	 * 
@@ -316,27 +302,26 @@ public class PerformanceMonitor {
 		int i = 0;
 		while (i < stack.length) {
 			// 在setUp和testXXX中会有orange的操作方法
-			if (stack[i].getMethodName().toString().startsWith("test") 
-					||stack[i].getMethodName().toString().startsWith("setUp")) {
+			if (stack[i].getMethodName().toString().startsWith("test") || stack[i].getMethodName().toString().startsWith("setUp")) {
 				break;
 			}
-			i ++;
+			i++;
 		}
 
 		if (i >= stack.length) {
-			testCaseInfo =  "No TestCase Info";
+			testCaseInfo = "No TestCase Info";
 		} else {
 			// “.”在正则中代码任意字符，不能用来分割，如需使用则通过“//.”转义
 			String[] packageName = stack[i].getClassName().toString().split("\\.");
 			className = packageName[packageName.length - 1];
-//			className = stack[i].getClassName().toString();
+			// className = stack[i].getClassName().toString();
 			testName = stack[i].getMethodName().toString();
 			testCaseInfo = className + "." + testName;
 		}
-//		Log.i(LOG_TAG, "*** getTestCaseInfo =" + testCaseInfo + " *** ");
+		// Log.i(LOG_TAG, "*** getTestCaseInfo =" + testCaseInfo + " *** ");
 		return testCaseInfo;
 	}
-	
+
 	/**
 	 * 从栈中获取相应操作方法名，有clickXXX，enterXXX，scrollXXX，typeXXX
 	 * 
@@ -349,19 +334,17 @@ public class PerformanceMonitor {
 		int i = 0;
 		while (i < stack.length) {
 			// 类对应的是OrangeSolo，
-			if (stack[i].getMethodName().toString().startsWith("click") 
-					||stack[i].getMethodName().toString().startsWith("enter")
-					||stack[i].getMethodName().toString().startsWith("scroll")
-					||stack[i].getMethodName().toString().startsWith("type")) {
+			if (stack[i].getMethodName().toString().startsWith("click") || stack[i].getMethodName().toString().startsWith("enter")
+					|| stack[i].getMethodName().toString().startsWith("scroll") || stack[i].getMethodName().toString().startsWith("type")) {
 				break;
 			}
-			i ++;
+			i++;
 		}
 
 		if (i >= stack.length) {
-			actionInfo =  "No Action Info";
+			actionInfo = "No Action Info";
 		} else {
-			//className暂时不用展现
+			// className暂时不用展现
 			testName = stack[i].getMethodName().toString();
 			actionInfo = testName;
 		}
